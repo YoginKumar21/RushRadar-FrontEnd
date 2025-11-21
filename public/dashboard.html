@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RushRadar — Dashboard</title>
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+  <link rel="stylesheet" href="/frontend/css/styles.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+</head>
+<body class="theme-dark">
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="logo"><span class="brand-main">Rush</span><span class="brand-accent">Radar</span></h1>
+      <div class="header-actions">
+        <button id="headerThemeToggle" class="btn icon">☀️</button>
+        <button id="logoutBtn" class="btn danger">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2 class="panel-title">Short-term</h2>
+        <div id="shortRange" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Long-term</h2>
+        <div id="longRange" class="stack"></div>
+      </section>
+
+      <section class="panel">
+        <h3>Traffic Intensity</h3>
+        <div class="legend">
+          <div><span class="dot low"></span> Low</div>
+          <div><span class="dot med"></span> Medium</div>
+          <div><span class="dot high"></span> High</div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Traffic Prediction Map</h2>
+          <span id="selectedLabel" class="pill">Next 15 min</span>
+        </div>
+
+        <div id="map" class="heatmap-wrap"></div>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Predicted Count</div>
+            <div class="stat-value" id="predictedCount">...</div>
+          </div>
+          <div class="stat">
+            
+            <div class="stat-label" id="peakHoursLabel">Peak Hours</div>
+            
+            <div class="stat-value" id="peakHours">...</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Traffic Classification</div>
+            <div class="stat-value" id="trafficClassification">...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel chart-card" style="display: none;">
+        <div class="panel-head">
+            <h2>Long-Term Trend</h2>
+        </div>
+        <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/frontend/js/dashboard.js"></script>
+</body>
+</html>

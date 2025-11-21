@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RushRadar — Login</title>
+  <link rel="stylesheet" href="/frontend/css/styles.css" />
+</head>
+<body class="theme-dark">
+  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme">☀️</button>
+
+  <main class="centered-card">
+    <div class="card auth-card">
+      <div class="brand">
+        <h1><span class="brand-main">Rush</span><span class="brand-accent">Radar</span></h1>
+        <p class="muted">Traffic Prediction System</p>
+      </div>
+
+      <form id="loginForm" class="form">
+        <label>Username
+          <input id="username" type="text" placeholder="Enter username" />
+        </label>
+
+        <label>Password
+          <input id="password" type="password" placeholder="Enter password" />
+        </label>
+
+        <div id="errorBox" class="error hidden"></div>
+
+        <button type="submit" class="btn primary full">Sign In</button>
+
+        <p class="demo-note">Demo: <strong>demo1</strong> / <strong>1234</strong></p>
+      </form>
+    </div>
+  </main>
+
+  <script src="/frontend/js/login.js"></script>
+</body>
+</html>
