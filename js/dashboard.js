@@ -48,7 +48,6 @@
   const shortRangeEl = document.getElementById('shortRange');
   const longRangeEl = document.getElementById('longRange');
   const selectedLabelEl = document.getElementById('selectedLabel');
-  const logoutBtn = document.getElementById('logoutBtn');
   const headerThemeToggle = document.getElementById('headerThemeToggle');
   const chartEl = document.getElementById('trendChart'); 
 
@@ -57,11 +56,6 @@
   const classEl = document.getElementById('trafficClassification');
   const peakEl = document.getElementById('peakHours');
   const peakLabelEl = document.getElementById('peakHoursLabel'); // Now this ID exists in the HTML
-
-  // Check login
-  if (localStorage.getItem('rushradar_isLoggedIn') !== '1') {
-    window.location.href = 'index.html';
-  }
 
   // Theme toggle
   const savedTheme = localStorage.getItem('rushradar_theme') || 'dark';
@@ -72,13 +66,6 @@
     document.body.classList.toggle('theme-light', nowLight);
     localStorage.setItem('rushradar_theme', nowLight ? 'light' : 'dark');
     headerThemeToggle.textContent = nowLight ? '🌙' : '☀️';
-  });
-
-  // Logout
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('rushradar_isLoggedIn');
-    localStorage.removeItem('rushradar_user');
-    window.location.href = 'index.html';
   });
 
   // Render range buttons
@@ -411,31 +398,71 @@
   // --- START: MAPBOX LOGIC (Unchanged) ---
   
   function initializeMap() {
-    if (!MAPBOX_API_KEY || MAPBOX_API_KEY.includes("YOUR_MAPBOX_API_KEY")) {
-        console.error("Mapbox API key is missing. Please add it to dashboard.js or provide it via backend.");
-        return;
-    }
-      
-    mapboxgl.accessToken = MAPBOX_API_KEY;
-    map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/dark-v11',
-      center: startCoords,
-      zoom: 12
-    });
+    // If Mapbox key is present, initialize Mapbox GL; otherwise fallback to Leaflet+OSM
+    if (MAPBOX_API_KEY && !MAPBOX_API_KEY.includes("YOUR_MAPBOX_API_KEY")) {
+      mapboxgl.accessToken = MAPBOX_API_KEY;
+      map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: startCoords,
+        zoom: 12
+      });
 
-    map.on('load', async () => {
-      const routeGeoJSON = await getRoute(startCoords, endCoords);
-      if (routeGeoJSON) {
-        addRouteLayer(routeGeoJSON);
+      map.on('load', async () => {
+        const routeGeoJSON = await getRoute(startCoords, endCoords);
+        if (routeGeoJSON) {
+          addRouteLayer(routeGeoJSON);
+        }
+
+        new mapboxgl.Marker({ color: '#22c55e' }).setLngLat(startCoords).setPopup(new mapboxgl.Popup().setHTML("Whitefield")).addTo(map);
+        new mapboxgl.Marker({ color: '#ef4444' }).setLngLat(endCoords).setPopup(new mapboxgl.Popup().setHTML("Marathahalli")).addTo(map);
+
+        // Run the first prediction after the map is fully loaded
+        handleRangeChange(); 
+      });
+
+    } else {
+      console.warn("Mapbox API key not found — using Leaflet + OpenStreetMap fallback.");
+
+      // Initialize Leaflet map (fallback)
+      try {
+        const leafletMap = L.map('map').setView([startCoords[1], startCoords[0]], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(leafletMap);
+
+        // Add markers
+        L.marker([startCoords[1], startCoords[0]], {title: 'Whitefield'}).addTo(leafletMap).bindPopup('Whitefield');
+        L.marker([endCoords[1], endCoords[0]], {title: 'Marathahalli'}).addTo(leafletMap).bindPopup('Marathahalli');
+
+        // Draw simple straight line between points as a fallback route
+        const latlngs = [ [startCoords[1], startCoords[0]], [endCoords[1], endCoords[0]] ];
+        L.polyline(latlngs, {color: '#888', weight: 6}).addTo(leafletMap);
+
+        // Expose a minimal `map` object with setPaintProperty behavior used elsewhere
+        map = {
+          _leaflet: leafletMap,
+          getLayer: () => true,
+          setPaintProperty: (layer, prop, value) => {
+            // change polyline color when asked
+            if (prop === 'line-color') {
+              leafletMap.eachLayer(function (l) {
+                if (l instanceof L.Polyline) {
+                  l.setStyle({ color: value });
+                }
+              });
+            }
+          }
+        };
+
+        // Run the first prediction after the map is ready
+        handleRangeChange();
+
+      } catch (e) {
+        console.error('Leaflet initialization failed:', e);
       }
-      
-      new mapboxgl.Marker({ color: '#22c55e' }).setLngLat(startCoords).setPopup(new mapboxgl.Popup().setHTML("Whitefield")).addTo(map);
-      new mapboxgl.Marker({ color: '#ef4444' }).setLngLat(endCoords).setPopup(new mapboxgl.Popup().setHTML("Marathahalli")).addTo(map);
-
-      // Run the first prediction after the map is fully loaded
-      handleRangeChange(); 
-    });
+    }
   }
 
   async function getRoute(start, end) {
