@@ -6,7 +6,7 @@
 
   // Fetch Mapbox API key from backend before anything else
   try {
-    const response = await fetch('http://127.0.0.1:5000/api/config');
+    const response = await fetch('https://rushredar-backend.onrender.com/api/config');
     if (!response.ok) {
       const text = await response.text();
       throw new Error(`Failed to fetch API key: ${response.status} ${text}`);
@@ -136,7 +136,7 @@
     console.log("Fetching recent data from backend...");
     try {
       // THIS ENDPOINT NEEDS TO BE CREATED IN YOUR FLASK APP
-      const response = await fetch('http://127.0.0.1:5000/api/get-recent-data');
+      const response = await fetch('https://rushredar-backend.onrender.com/api/get-recent-data');
       if (!response.ok) {
         const err = await response.json();
         console.error('Failed to fetch recent data:', err.error);
@@ -171,7 +171,7 @@
     // 2. Call the API
     try {
       // Calls /api/predict?horizon=...
-      const response = await fetch(`http://127.0.0.1:5000/api/predict?horizon=${horizonToPredict}`, {
+      const response = await fetch(`https://rushredar-backend.onrender.com/api/predict?horizon=${horizonToPredict}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -231,7 +231,7 @@
     
     try {
       // Calls /api/trends?start=...&end=...
-      const response = await fetch(`http://127.0.0.1:5000/api/trends?start=${start}&end=${end}`);
+      const response = await fetch(`https://rushredar-backend.onrender.com/api/trends?start=${start}&end=${end}`);
       const result = await response.json();
       
       if (response.ok) {
