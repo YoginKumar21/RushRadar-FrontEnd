@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RushRadar — Dashboard</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2YkGg4m6w6FZ2h6yq0h3zT3C1p8aV+0w5x0wRqo=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-QVbM2hGk8bqgk+6XQm4l1/0fZlq9U5q5s3m6a3s9b0A=" crossorigin=""></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+  <!-- Leaflet fallback (used when Mapbox API key is not set) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOqCgsyUGpwDtmZgrNDtGdJ4Rg" crossorigin="anonymous" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-RDvyN1Hqa9OgVw6I8EDZgZrryO0RaYiSuxCxteiD+KVUT2okCgsyUGpwDtmZgrNDtGdJ4Rg" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/styles.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
